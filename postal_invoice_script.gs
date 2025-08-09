@@ -9,7 +9,10 @@ function create_postal_invoice(){
     get_column_index.set(column_name, data[0].indexOf(column_name))
     final_columns_index.set(column_name, index)
   })
-  data = data.filter(row => row[get_column_index.get("Posting Type")].toLowerCase() === "postal");
+  data = data.filter(row => {
+    let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
+    return posting_type === "postal" || posting_type === "more copies";
+  });
   data = data.map((row) => {
     let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
     return new_row
