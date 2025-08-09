@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    @page {
+      size: 20.9cm 29.7cm;
+      margin: 0.4cm 0.3cm;
+      /* Top/Bottom: 0.4cm, Left/Right: 0.3cm */
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      font-size: 13.5pt;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    .label-sheet {
+      display: grid;
+      grid-template-columns: 10cm 0.3cm 10cm;
+      grid-template-rows: repeat(4, 7.2cm);
+      width: 100%;
+      height: 100%;
+      page-break-after: always;
+      box-sizing: border-box;
+    }
+
+    .label {
+      padding: 0.3cm;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .gap {
+      width: 0.3cm;
+      height: 100%;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: inherit;
+    }
+
+    .label-top-row {
+      display: flex;
+      justify-content: space-between;
+      width: 85%;
+      font-family: inherit;
+      font-size: inherit;
+    }
+    
+    .to-right {
+      text-align: right;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+  <? for (var i = 0; i < labels_data.length; i += 8) { ?>
+  <div class="label-sheet">
+    <? for (var j = 0; j < 8; j++) {
+      var label = labels_data[i + j];
+      if (!label) break;
+    ?>
+    <div class="label">
+      <div class="label-top-row">
+        <span><?= label.address_data.area_code ?> / <?= label.address_data.ss_no ?></span>
+        <span class="to-right"><b><?= label.bundle_no ?></b></span>
+      </div>
+
+      <? if (label.address_data.salution) { ?>
+      <?= label.address_data.salution ?>&nbsp;
+      <? } ?>
+
+      <? if (label.address_data.customer_name) { ?>
+      <?= label.address_data.customer_name ?><br/>
+      <? } ?>
+
+      <? if (label.address_data.shipping_address) { ?>
+      <?= label.address_data.shipping_address ?><br/>
+      <? } ?>
+
+      <? if (label.address_data.shipping_address2) { ?>
+      <?= label.address_data.shipping_address2 ?><br/>
+      <? } ?>
+
+      <? if (label.address_data.shipping_city) { ?>
+      <?= label.address_data.shipping_city ?><br/>
+      <? } ?>
+
+      <? if (label.address_data.shipping_zip) { ?>
+      <?= label.address_data.shipping_zip ?>
+      <? } ?>
+    </div>
+
+    <? if (j % 2 === 0) { ?>
+    <div class="gap"></div>
+    <? } ?>
+    <? } ?>
+  </div>
+  <? } ?>
+</body>
+
+</html>
