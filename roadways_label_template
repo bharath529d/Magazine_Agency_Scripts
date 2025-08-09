@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <title>Fixed-Position Shipping Labels</title>
+  <style>
+    @page {
+      size: 20.9cm 29.7cm;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      position: relative;
+      font-family: Arial, sans-serif;
+      font-size: 13.5pt;
+    }
+    .page {
+      position: relative;
+      width: 20.9cm;
+      height: 29.7cm;
+    }
+    /* Part 1 positions */
+    .bundle1    { position: absolute; left: 16.3cm;   top: 2.5cm;}
+    .ss1        { position: absolute; left: 2cm;    top: 3.3cm; padding-bottom: 0.3cm}
+    .address1 {
+        position: absolute;
+        left: 5cm;
+        top: 4.5cm;
+        width: 13cm;
+        height: 3.5cm;
+        overflow: hidden;
+
+        /* collapse all whitespace, but honor <br> */
+        white-space: normal;
+        overflow-wrap: break-word;
+
+        /* text at top-left */
+        text-align: left;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+
+        /* tweak line height if needed */
+        line-height: 1.2em;
+    }
+    .dest1      { position: absolute; left: 5cm;  top: 8.2cm; }
+    .dispatch1  { position: absolute; left: 18cm;   top: 9.5cm; }
+    /* Part 2 positions */
+    .bundle2    { position: absolute; left: 16.3cm;   top: 17.7cm; }
+    .ss2        { position: absolute; left: 2cm;    top: 18.6cm; }
+    .address2{
+        position: absolute; 
+        left: 5cm;  
+        top: 19.7cm;
+        width: 13cm;
+        height: 3.5cm;
+        overflow: hidden;
+
+        /* collapse all whitespace, but honor <br> */
+        white-space: normal;
+        overflow-wrap: break-word;
+
+        /* text at top-left */
+        text-align: left;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+
+        /* tweak line height if needed */
+        line-height: 1.2em;         
+      }
+    .dest2      { position: absolute; left: 5cm;  top: 23.4cm; }
+    .dispatch2  { position: absolute; left: 18cm;   top: 24.7cm; }
+  </style>
+</head>
+<body>
+  <? for (var i = 0; i < labels_data.length; i = i + 2) {
+       var label1 = labels_data[i];
+       if(!label1){
+        break;
+       }
+       var label2 = labels_data[i + 1] ?>
+    <div class="page">
+      <!-- Part 1 -->
+      <div class="bundle1"><?= label1.bundle_no ?></div>
+      <div class="ss1"><?= label1.address_data.ss_no ?></div>
+      <div class="address1">
+        <? if (label1.address_data.salution) { ?>
+         <?= label1.address_data.salution ?>&nbsp;
+        <? } ?>
+        <? if (label1.address_data.customer_name) { ?><?= label1.address_data.customer_name ?><br><? } ?>
+        <? if (label1.address_data.shipping_address)  { ?><?= label1.address_data.shipping_address ?><br><? } ?>
+        <? if (label1.address_data.shipping_address2) { ?><?= label1.address_data.shipping_address2 ?><br><? } ?>
+        <? if (label1.address_data.shipping_city)     { ?><?= label1.address_data.shipping_city ?>&nbsp;<? } ?>
+        <? if (label1.address_data.shipping_zip)      { ?><?= label1.address_data.shipping_zip ?><? } ?>
+      </div>
+      <div class="dest1"><?= label1.address_data.destination_place ?></div>
+      <div class="dispatch1"><?= label1.address_data.despatched_through ?></div>
+
+      <!-- Part 2 -->
+      <? if(label2) { ?>
+        <div class="bundle2"><?= label2.bundle_no ?></div>
+        <div class="ss2"><?= label2.address_data.ss_no ?></div>
+        <div class="address2">
+          <? if (label2.address_data.salution || label2.address_data.customer_name) { ?>
+            <? if (label2.address_data.salution)    { ?><?= label2.address_data.salution ?>&nbsp;<? } ?>
+            <? if (label2.address_data.customer_name) { ?><?= label2.address_data.customer_name ?><br><? } ?>
+          <? } ?>
+          <? if (label2.address_data.shipping_address)  { ?><?= label2.address_data.shipping_address ?><br><? } ?>
+          <? if (label2.address_data.shipping_address2) { ?><?= label2.address_data.shipping_address2 ?><br><? } ?>
+          <? if (label2.address_data.shipping_city)     { ?><?= label2.address_data.shipping_city ?>&nbsp;<? } ?>
+          <? if (label2.address_data.shipping_zip)      { ?><?= label2.address_data.shipping_zip ?><? } ?>
+        </div>
+        <div class="dest2"><?= label2.address_data.destination_place ?></div>
+        <div class="dispatch2"><?= label2.address_data.despatched_through ?></div>
+      <? } ?>
+    </div>
+  <? } ?>
+</body>
+</html>
