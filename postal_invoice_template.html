@@ -88,11 +88,11 @@
     tbody td.col-tpd, thead th.col-tpd{ width:18%; }
     tbody td.col-tc,  thead th.col-tc { width:16%; }
 
-    tbody tr.blank-row td{
+    /* tbody tr.blank-row td{  -- not needed now, use when blank rows before grand total row is needed.
       padding:12px 8px;
       border-top:1px solid #999;
       color:transparent;
-    }
+    } */
 
     /* Grand total row */
     tfoot td{
@@ -238,7 +238,8 @@
           </tr>
         <? }); ?>
 
-        <tr class="blank-row"><td colspan="7">-</td></tr>
+        <!-- Not needed unless we want a blank row before grand total -->
+        <!--  <tr class="blank-row"><td colspan="7">-</td></tr> -->
       </tbody>
       <tfoot>
         <tr>
