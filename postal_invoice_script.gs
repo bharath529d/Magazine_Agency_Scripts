@@ -1,18 +1,25 @@
-var Decimal = DecimalJsLib.Decimal
+var Decimal = DecimalJsLib.Decimal // this is decimal object which is got from decimaljsLib
 function create_postal_invoice(){
-  let required_columns = ["No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type"]
-  let get_column_index = new Map() // indexes of column before preprocessing (we need it to extract only relevant column)
+  // Columns needed from the sheet to prepare the invoice
+  let required_columns = ["No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type"] 
+  // get_column_index stores indexes(from the Subscription sheet) of the required columns .
+  let get_column_index = new Map() // indexes of column before selection of columns from the subscription sheet (we need it to extract only relevant column)
+  // final_columns_index stores the indexes of the required columns after get have only the relevant columns
   let final_columns_index = new Map()
   let data_range = getSheet("Subscriptions").getDataRange()
+  // data now stores all the data as a 2d array from the Subscription sheet
   data = data_range.getValues();
+  // stores indexes for the columns as planned
   required_columns.forEach((column_name, index) => {
     get_column_index.set(column_name, data[0].indexOf(column_name))
     final_columns_index.set(column_name, index)
   })
+  // Filtering only the rows what is needed for preparing the invoice (in our case, we need rows that have either 'postal' or 'more copies' in the Posting type column) 
   data = data.filter(row => {
     let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
     return posting_type === "postal" || posting_type === "more copies";
   });
+  // now get extract only the relevannt columns from the rows and stores it in data 
   data = data.map((row) => {
     let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
     return new_row
@@ -21,20 +28,18 @@ function create_postal_invoice(){
   //cpy_bdle contains copies_per_bundle as key and no_of_bundles as value
   cpy_bdle = new Map();
   
-  data.forEach((row, index) => {
+  data.forEach((row) => {
     let copies_per_bundle = toInt(row[final_columns_index.get("Copies Boxes 1")])
     let no_of_bundles = toInt(row[final_columns_index.get("No Boxes 1")])
     let prev_no_of_bdle;
     if(copies_per_bundle > 0 && no_of_bundles > 0){
       prev_no_of_bdle = toInt(cpy_bdle.get(copies_per_bundle))
-      // console.log(copies_per_bundle, prev_no_of_bdle + no_of_bundles )
       cpy_bdle.set(copies_per_bundle, prev_no_of_bdle + no_of_bundles)
     }
     copies_per_bundle = toInt(row[final_columns_index.get("Copies Boxes 2")])
     no_of_bundles = toInt(row[final_columns_index.get("No Boxes 2")])
     if(copies_per_bundle > 0 && no_of_bundles > 0){
       prev_no_of_bdle = toInt(cpy_bdle.get(copies_per_bundle))
-     // console.log(copies_per_bundle, prev_no_of_bdle + no_of_bundles )
       cpy_bdle.set(copies_per_bundle, prev_no_of_bdle + no_of_bundles)
     }
   })
@@ -48,7 +53,6 @@ function create_postal_invoice(){
   let grand_total_copies = 0
 
   let ps = PropertiesService.getScriptProperties()
-  let weight_per_copy, extra_weight, postal_min_due, per_100gm_rate
   for (const [copies_per_bundle, no_of_bundles] of cpy_bdle) {
     let bundle = new Map();
     bundle.set("copies_per_bundle", copies_per_bundle)
@@ -77,6 +81,8 @@ function create_postal_invoice(){
   grand_total_details.set('grand_total_postage_due',grand_total_postage_due.toString())
   grand_total_details.set('grand_total_copies',grand_total_copies)
 
+  grouped_bundles.sort((bundle1, bundle2) => bundle1.get("copies_per_bundle") - bundle2.get("copies_per_bundle"))
+  
   let htmlTemplate = HtmlService.createTemplateFromFile("postal_invoice_template.html");
   htmlTemplate.grouped_bundles = grouped_bundles;
   htmlTemplate.grand_total_details = grand_total_details;
@@ -92,7 +98,6 @@ function create_postal_invoice(){
   }
   let file = folder.createFile("PostInvoice_" + ps.getProperty('date') + ".html", html, MimeType.HTML);
   console.log("File created " + file.getId());
-
 }
 
 /**
