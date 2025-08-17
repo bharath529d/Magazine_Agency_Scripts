@@ -85,6 +85,48 @@
   </style>
 </head>
 <body>
+  <script>
+    console.log("Script Started..")
+    function saveData() {
+      var formData = {
+        magazine_name: document.getElementById('magazine_name').value,
+        magazine_rate: document.getElementById('magazine_rate').value,
+        date: document.getElementById('date').value,
+        weight_per_copy: document.getElementById('weight_per_copy').value,
+        extra_weight: document.getElementById('extra_weight').value,
+        first_100gm_rate: document.getElementById('first_100gm_rate').value,
+        per_100gm_rate: document.getElementById('per_100gm_rate').value,
+        prepared_by_name: document.getElementById('prepared_by_name').value
+      };
+
+      // ✅ Show loader
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('status').innerText = 'Saving...';
+
+      google.script.run
+        .withSuccessHandler(function(msg) {
+          document.getElementById('loader').style.display = 'none'; // ✅ Hide loader
+          document.getElementById('status').innerText = msg;        // ✅ Show success
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById('loader').style.display = 'none'; // ✅ Hide loader
+          document.getElementById('status').innerText = "❌ Error: " + error.message;
+        })
+        .save_form_data(formData);
+    }
+    console.log("After Save Data function")
+    // Prefill form with existing values
+    google.script.run.withSuccessHandler(function(data){
+      for (var key in data) {
+        if (document.getElementById(key)) {
+          document.getElementById(key).value = data[key];
+        }
+      }
+    }).get_form_data();
+    console.log("Prefilled the data")
+  </script>
+
+
   <h3>Magazine Details</h3>
   <form id="magForm">
     <div>
@@ -103,12 +145,12 @@
     </div>
     
     <div>
-      <label>Weight per copy:</label>
+      <label>Weight per copy (in kgs):</label>
       <input type="number" id="weight_per_copy" name="weight_per_copy" step="0.01">
     </div>
     
     <div>
-      <label>Extra Weight:</label>
+      <label>Extra Weight (in kgs):</label>
       <input type="number" id="extra_weight" name="extra_weight" step="0.01">
     </div>
     
@@ -121,6 +163,11 @@
       <label>Per 100gm (except 1st 100gm):</label>
       <input type="number" id="per_100gm_rate" name="per_100gm_rate" step="0.01">
     </div>
+
+    <div>
+      <label>Prepared By Name: (Door Delivery)</label>
+      <input type="text" id="prepared_by_name" name="prepared_by_name">
+    </div>
     <br>
     <div>
       <button type="button" onclick="saveData()">💾 Save Details</button>
@@ -131,43 +178,5 @@
     <img src="https://www.google.com/images/spin-32.gif" alt="Loading...">
   </div>
   <p id="status" style="font-size:13px; color:#666;"></p>
-
-  <script>
-    function saveData() {
-      var formData = {
-        magazine_name: document.getElementById('magazine_name').value,
-        magazine_rate: document.getElementById('magazine_rate').value,
-        date: document.getElementById('date').value,
-        weight_per_copy: document.getElementById('weight_per_copy').value,
-        extra_weight: document.getElementById('extra_weight').value,
-        first_100gm_rate: document.getElementById('first_100gm_rate').value,
-        per_100gm_rate: document.getElementById('per_100gm_rate').value
-      };
-
-      // ✅ Show loader
-      document.getElementById('loader').style.display = 'block';
-      document.getElementById('status').innerText = 'Saving...';
-
-      google.script.run
-        .withSuccessHandler(function(msg) {
-          document.getElementById('loader').style.display = 'none'; // ✅ Hide loader
-          document.getElementById('status').innerText = msg;        // ✅ Show success
-        })
-        .withFailureHandler(function(error) {
-          document.getElementById('loader').style.display = 'none'; // ✅ Hide loader
-          document.getElementById('status').innerText = "❌ Error: " + error.message;
-        })
-        .save_form_data(formData);
-    }
-
-    // Prefill form with existing values
-    google.script.run.withSuccessHandler(function(data){
-      for (var key in data) {
-        if (document.getElementById(key)) {
-          document.getElementById(key).value = data[key];
-        }
-      }
-    }).get_form_data();
-  </script>
 </body>
 </html>
