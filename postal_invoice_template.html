@@ -18,7 +18,6 @@
       margin:0;
     }
     body{
-      margin:24px;
       font-family: "Segoe UI", Roboto, Arial, sans-serif;
       color:var(--ink);
       background:var(--bg);
@@ -36,7 +35,7 @@
     .report-date{
       position:absolute;
       top:0;
-      right:0;
+      left: 0;
       font-size:14px;
       color:var(--ink);
       padding:6px 10px;
@@ -162,14 +161,16 @@
         margin: 0;
       }
       .page {
+        margin: 24px;
         min-height: 100vh;
       }
       .footer {
-        margin-top: auto;
+        margin-top: 50px;
       }
-      .summary-grid{
-        page-break-before: always; /* Push summary box to a new page */
-        break-before: page;        /* Modern browsers */
+      .report-date{
+        position: absolute;
+        top: 0;
+        left: 0;
       }
     }
   </style>
@@ -207,9 +208,8 @@
     var fmt = function(v){ return (v === null || v === undefined) ? "" : v; };
   ?>
 
+  <div class="report-date"><strong>Date:</strong> <?= fmt(_date) ?></div>
   <div class="page">
-    <div class="report-date"><strong>Date:</strong> <?= fmt(_date) ?></div>
-
     <div class="title main">INFORMATION ON BUNDLES POSTED INLAND</div>
     <div class="title sub"><?= fmt(_mag) ?></div>
 
@@ -251,6 +251,7 @@
       </tfoot>
     </table>
 
+
     <div class="summary-grid">
       <div class="row">
         <div class="cell label">Bundles</div>
@@ -261,9 +262,6 @@
         <div class="cell value"><?= fmt(_grand.grand_total_copies) ?></div>
       </div>
     </div>
-    <br>
-    <br>
-    <br>
     <div class="footer">
       <div class="sig">for Signature of the Publisher.</div>
       <div class="sig">Sorting Assistant<br/>with Date Stamp.</div>
