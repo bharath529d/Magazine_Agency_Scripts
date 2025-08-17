@@ -23,7 +23,8 @@ function get_form_data() {
     'weight_per_copy',
     'extra_weight',
     'first_100gm_rate',
-    'per_100gm_rate'
+    'per_100gm_rate',
+    'prepared_by_name'
   ];
   let result = {};
   keys.forEach(function(key) {
