@@ -21,10 +21,11 @@ function generate_postal_shipping_label(data) {
       let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
       return new_row
     })
-
+    //sorting by subscription_number (ascending)
     data.sort(function (a, b) {
       return a[0].localeCompare(b[0]);
     });
+
     set_data(required_columns, data, target_sheet) // setting the data in the "Postal Address Label" sheet
   } else {
     console.log("Data Already preprocessed, so let's use it")
