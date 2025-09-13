@@ -11,6 +11,7 @@ function toInt(v) {
 }
 
 function set_data(headers, data, target_sheet){
+  target_sheet.clear();
   target_sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight("bold");
   target_sheet.getRange(2, 1, data.length, data[0].length).setValues(data)
   applyZebraStriping(target_sheet.getDataRange())
@@ -42,6 +43,7 @@ function onOpen() {
   ui.createMenu('Agency')
     .addItem('Generate Postal Shipping Label', 'generate_postal_shipping_label')
     .addItem('Generate Roadways Shipping Label', 'generate_roadways_shipping_label')
+    .addItem('Generate Door Delivery Label', 'create_door_delivery_labels')
     .addItem('Generate All', 'generate_all_shipping_labels')
     .addItem('Magazine Details Form', 'show_form')
     .addItem('Generate Postal Invoice', 'create_postal_invoice')
