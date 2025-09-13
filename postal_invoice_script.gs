@@ -1,7 +1,8 @@
 var Decimal = DecimalJsLib.Decimal // this is decimal object which is got from decimaljsLib
 function create_postal_invoice(){
+  let target_sheet = getSheet("Postal Invoice")
   // Columns needed from the sheet to prepare the invoice
-  let required_columns = ["No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type"] 
+  let required_columns = ["subscription_number", "customer_name", "No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type"] 
   // get_column_index stores indexes(from the Subscription sheet) of the required columns .
   let get_column_index = new Map() // indexes of column before selection of columns from the subscription sheet (we need it to extract only relevant column)
   // final_columns_index stores the indexes of the required columns after get have only the relevant columns
@@ -24,6 +25,13 @@ function create_postal_invoice(){
     let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
     return new_row
   })
+
+  //sorting by subscription_number (ascending)
+   data.sort(function (a, b) {
+      return a[0].localeCompare(b[0]);
+  });
+  
+  set_data(required_columns, data, target_sheet)
   
   //cpy_bdle contains copies_per_bundle as key and no_of_bundles as value
   cpy_bdle = new Map();
@@ -61,7 +69,7 @@ function create_postal_invoice(){
     let extra_weight = ps.getProperty("extra_weight")
     // Multiplying 1000 to convert the kg into gm for easy calculation
     let weight_per_bundle = new Decimal(weight_per_copy).times(copies_per_bundle).plus(extra_weight).toDecimalPlaces(3, Decimal.ROUND_HALF_EVEN)
-    bundle.set("weight_per_bundle", weight_per_bundle.toString())
+    bundle.set("weight_per_bundle", weight_per_bundle.times(1000).toString())
     let first_100gm_rate = ps.getProperty("first_100gm_rate")
     let per_100gm_rate = ps.getProperty("per_100gm_rate")
     let postage_due = calculate_postage_due(weight_per_bundle, new Decimal(first_100gm_rate), new Decimal(per_100gm_rate))
