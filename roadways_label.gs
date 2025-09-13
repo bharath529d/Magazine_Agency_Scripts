@@ -21,6 +21,7 @@ function generate_roadways_shipping_label(data) {
       let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
       return new_row
     })
+    //sorting by subscription_number (ascending)
     data.sort(function (a, b) {
       return a[0].localeCompare(b[0]);
     });
