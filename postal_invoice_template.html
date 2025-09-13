@@ -154,6 +154,10 @@
     }
 
     @media print{
+      .summary-grid{
+        page-break-before: always;
+        break-before: page;
+      }
       html, body {
         height: auto;
       }
@@ -218,7 +222,7 @@
         <tr>
           <th class="col-sl"></th>
           <th class="col-cpb">Copies per<br/>Bundles</th>
-          <th class="col-wpb">Weight per Bundle</th>
+          <th class="col-wpb">Weight per Bundle (in grams)</th>
           <th class="col-pd">Postage Due</th>
           <th class="col-nob">No. of Bundles</th>
           <th class="col-tpd">Total Postage Due</th>
