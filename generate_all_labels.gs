@@ -30,11 +30,13 @@ function generate_all_shipping_labels(){
     )
     generate_postal_shipping_label(postal_data)
     generate_roadways_shipping_label(roadways_data)
+    create_door_delivery_labels()
   }else{
     throw new Error("Import the excel data");
   }
 }
 
+/*
 function generate_all_labels(){
   if(is_sheet_exists("Subscriptions")){
     let required_columns = ["subscription_number","customer_name","salutation","mobile","phone","Contact.CF.Area Code","shipping_address","shipping_address2","shipping_city","shipping_zip","FreeCopies","No Boxes 1","Copies Boxes 1","No Boxes 2","Copies Boxes 2","Posting Type","Despatched through","Destination Place"]
@@ -70,4 +72,4 @@ function generate_all_labels(){
   }else{
     throw new Error("Import the excel data");
   }
-}
+}*/
