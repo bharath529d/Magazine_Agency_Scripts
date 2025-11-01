@@ -1,6 +1,6 @@
 var Decimal = DecimalJsLib.Decimal // this is decimal object which is got from decimaljsLib
-function create_postal_invoice(){
-  let target_sheet = getSheet("Postal Invoice")
+function create_invoice(type){
+  let target_sheet, file_name,template_name;
   // Columns needed from the sheet to prepare the invoice
   let required_columns = ["subscription_number", "customer_name", "No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type"] 
   // get_column_index stores indexes(from the Subscription sheet) of the required columns .
@@ -15,11 +15,35 @@ function create_postal_invoice(){
     get_column_index.set(column_name, data[0].indexOf(column_name))
     final_columns_index.set(column_name, index)
   })
-  // Filtering only the rows what is needed for preparing the invoice (in our case, we need rows that have either 'postal' or 'more copies' in the Posting type column) 
-  data = data.filter(row => {
-    let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
-    return posting_type === "postal" || posting_type === "more copies";
-  });
+
+  // Filtering only the rows what is needed for preparing the invoice.
+  if(type == 'P'){
+    target_sheet = getSheet("Postal Invoice")
+    template_name = 'postal_invoice_template.html'
+    file_name = 'PostalInvoice'
+    data = data.filter(row => {
+      let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
+      return posting_type === "postal" 
+    });
+  }else if(type == 'M'){
+    target_sheet = getSheet("More Copies Invoice")
+    template_name = 'more_copies_invoice_template.html'
+    file_name = 'MoreCopiesInvoice'
+    data = data.filter(row => {
+      let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
+      return posting_type === "more copies";
+    });
+  }else if(type == 'B'){
+    target_sheet = getSheet("Both P & MC Invoices")
+    template_name = 'postal_invoice_template.html'
+    file_name = 'Both_Postal_More_Copies_Invoices'
+    data = data.filter(row => {
+      let posting_type = (row[get_column_index.get("Posting Type")] || "").toLowerCase();
+      return posting_type === "postal" || posting_type === "more copies";
+    });
+  }
+
+  
   // now get extract only the relevannt columns from the rows and stores it in data 
   data = data.map((row) => {
     let new_row = required_columns.map(column_name => row[get_column_index.get(column_name)]);
@@ -90,21 +114,21 @@ function create_postal_invoice(){
   grand_total_details.set('grand_total_copies',grand_total_copies)
 
   grouped_bundles.sort((bundle1, bundle2) => bundle1.get("copies_per_bundle") - bundle2.get("copies_per_bundle"))
-  
-  let htmlTemplate = HtmlService.createTemplateFromFile("postal_invoice_template.html");
+
+  let htmlTemplate = HtmlService.createTemplateFromFile(template_name);
   htmlTemplate.grouped_bundles = grouped_bundles;
   htmlTemplate.grand_total_details = grand_total_details;
   htmlTemplate.magazine_name = ps.getProperty("magazine_name")
   htmlTemplate.date = ps.getProperty('date')
   let html = htmlTemplate.evaluate().getContent();
-  let folder = DriveApp.getFoldersByName("Postal Invoice");
+  let folder = DriveApp.getFoldersByName("All Invoices");
   if (folder.hasNext()) {
     folder = folder.next();
   }
   else {
-    folder = DriveApp.createFolder("Postal Invoice");
+    folder = DriveApp.createFolder("All Invoices");
   }
-  let file = folder.createFile("PostInvoice_" + ps.getProperty('date') + ".html", html, MimeType.HTML);
+  let file = folder.createFile(file_name + ps.getProperty('date') + ".html", html, MimeType.HTML);
   console.log("File created " + file.getId());
 }
 
@@ -138,3 +162,14 @@ function calculate_postage_due(weight_per_bundle, first_100gm_rate, per_100gm_ra
   return postage_due
 }
 
+function create_more_copies_invoice(){
+ create_invoice('M')
+}
+
+function create_postal_invoice(){
+ create_invoice('P')
+}
+
+function create_both_invoices(){
+ create_invoice('B')
+}
