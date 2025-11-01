@@ -1,0 +1,272 @@
+<!-- postal_invoice_template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Postal Invoice</title>
+  <style>
+    :root{
+      --ink:#111;
+      --muted:#666;
+      --grid:#222;
+      --bg:#fff;
+      --accent:#000;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      height:100%;
+      margin:0;
+    }
+    body{
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .page{
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* for short content pages */
+    }
+    /* Header */
+    .report-date{
+      position:absolute;
+      top:0;
+      left: 0;
+      font-size:14px;
+      color:var(--ink);
+      padding:6px 10px;
+      border:1px solid #bbb;
+      border-radius:6px;
+    }
+    .title{
+      text-align:center;
+      margin-top:8px;
+      margin-bottom:6px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .title.main{ font-size:16px; text-transform:uppercase; }
+    .title.sub{ font-size:15px; text-transform:uppercase; }
+
+    /* Table */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      table-layout:fixed;
+      border:2px solid var(--grid);
+    }
+    th, td {
+      border: 1px solid var(--grid); /* ensures vertical + horizontal lines */
+    }
+    thead th{
+      border-bottom:2px solid var(--grid);
+      background:#f2f2f2;
+      font-weight:700;
+      text-align:center;
+      padding:8px 6px;
+      font-size:13px;
+    }
+    tbody td{
+      border-bottom:2px solid var(--grid);
+      border-top:1px solid #999;
+      padding:6px 8px;
+      font-size:13px;
+      text-align:right;
+      vertical-align:middle;
+    }
+    tbody td.col-sl, thead th.col-sl{ width:6%; text-align:center; }
+    tbody td.col-cpb, thead th.col-cpb{ width:14%; text-align:center; }
+    tbody td.col-wpb, thead th.col-wpb{ width:18%; }
+    tbody td.col-pd,  thead th.col-pd { width:14%; }
+    tbody td.col-nob, thead th.col-nob{ width:14%; }
+    tbody td.col-tpd, thead th.col-tpd{ width:18%; }
+    tbody td.col-tc,  thead th.col-tc { width:16%; }
+
+    /* tbody tr.blank-row td{  -- not needed now, use when blank rows before grand total row is needed.
+      padding:12px 8px;
+      border-top:1px solid #999;
+      color:transparent;
+    } */
+
+    /* Grand total row */
+    tfoot td{
+      border-top:2px solid var(--grid);
+      font-weight:700;
+      padding:8px;
+      font-size:13px;
+    }
+    tfoot td.label{
+      text-align:right;
+      letter-spacing:.3px;
+    }
+    tfoot td.center{ text-align:center; }
+
+    /* Summary box (bottom-left) */
+    .summary-grid{
+      margin-top:16px;
+      display:inline-block;
+      border:2px solid var(--grid);
+      border-radius:6px;
+      overflow:hidden;
+    }
+    .summary-grid .row{
+      display:flex;
+      min-width:260px;
+      border-top:1px solid #999;
+    }
+    .summary-grid .row:first-child{ border-top:0; }
+    .summary-grid .cell{
+      flex:1;
+      padding:10px 14px;
+      font-size:14px;
+    }
+    .summary-grid .cell.label{
+      width:50%;
+      font-weight:600;
+      border-right:1px solid #999;
+    }
+    .summary-grid .cell.value{
+      text-align:right;
+      font-weight:700;
+    }
+
+    /* Footer sign lines */
+    .footer{
+      margin-top: auto; /* pushes footer to bottom of last flex page */
+      display:flex;
+      gap:16px;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:15px;
+      page-break-inside: avoid; /* keep footer intact on one page */
+    }
+    .sig{
+      flex:1;
+      text-align:center;
+      padding-top:28px;
+      border-top:1px solid #bbb;
+      margin-top:32px;
+    }
+
+    @media print{
+      html, body {
+        height: auto;
+      }
+      body {
+        margin: 0;
+      }
+      .page {
+        margin: 24px;
+        min-height: 100vh;
+      }
+      .footer {
+        margin-top: 50px;
+      }
+      .report-date{
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <? 
+    var _rows = [];
+    var _i = 0;
+    (grouped_bundles || []).forEach(function(b){
+      var get = function(k){
+        if (typeof Map !== 'undefined' && b instanceof Map) return b.get(k);
+        return b[k];
+      };
+      _rows.push({
+        sl: ++_i,
+        copies_per_bundle: get('copies_per_bundle'),
+        weight_per_bundle: get('weight_per_bundle'),
+        postage_due: get('postage_due'),
+        no_of_bundles: get('no_of_bundles'),
+        total_postage_due: get('total_postage_due'),
+        total_copies: get('total_copies')
+      });
+    });
+
+    var _grand = (typeof Map !== 'undefined' && grand_total_details instanceof Map)
+      ? {
+          grand_total_no_of_bundle: grand_total_details.get('grand_total_no_of_bundle'),
+          grand_total_postage_due: grand_total_details.get('grand_total_postage_due'),
+          grand_total_copies: grand_total_details.get('grand_total_copies'),
+        }
+      : (grand_total_details || {});
+
+    var _date = (typeof date !== 'undefined' && date) ? date : (_grand.date || "");
+    var _mag  = (typeof magazine_name !== 'undefined' && magazine_name) ? magazine_name : "";
+    var fmt = function(v){ return (v === null || v === undefined) ? "" : v; };
+  ?>
+
+  <div class="report-date"><strong>Date:</strong> <?= fmt(_date) ?></div>
+  <div class="page">
+    <div class="title main">INFORMATION ON BUNDLES POSTED INLAND</div>
+    <div class="title sub"><?= fmt(_mag) ?></div>
+
+    <table>
+      <thead>
+        <tr>
+          <th class="col-sl"></th>
+          <th class="col-cpb">Copies per<br/>Bundles</th>
+          <th class="col-wpb">Weight per Bundle (in grams)</th>
+          <th class="col-pd">Postage Due</th>
+          <th class="col-nob">No. of Bundles</th>
+          <th class="col-tpd">Total Postage Due</th>
+          <th class="col-tc">Total Copies</th>
+        </tr>
+      </thead>
+      <tbody>
+        <? _rows.forEach(function(r){ ?>
+          <tr>
+            <td class="col-sl"    style="text-align:center;"><?= r.sl ?></td>
+            <td class="col-cpb"   style="text-align:center;"><?= fmt(r.copies_per_bundle) ?></td>
+            <td class="col-wpb"><?= fmt(r.weight_per_bundle) ?></td>
+            <td class="col-pd"><?= fmt(r.postage_due) ?></td>
+            <td class="col-nob"><?= fmt(r.no_of_bundles) ?></td>
+            <td class="col-tpd"><?= fmt(r.total_postage_due) ?></td>
+            <td class="col-tc"><?= fmt(r.total_copies) ?></td>
+          </tr>
+        <? }); ?>
+
+        <!-- Not needed unless we want a blank row before grand total -->
+        <!--  <tr class="blank-row"><td colspan="7">-</td></tr> -->
+      </tbody>
+      <tfoot>
+        <tr>
+          <td class="center col-sl" colspan="4" style="text-align:center;">Grand Total</td>
+          <td class="col-nob"><?= fmt(_grand.grand_total_no_of_bundle) ?></td>
+          <td class="col-tpd"><?= fmt(_grand.grand_total_postage_due) ?></td>
+          <td class="col-tc"><?= fmt(_grand.grand_total_copies) ?></td>
+        </tr>
+      </tfoot>
+    </table>
+
+
+    <div class="summary-grid">
+      <div class="row">
+        <div class="cell label">Bundles</div>
+        <div class="cell value"><?= fmt(_grand.grand_total_no_of_bundle) ?></div>
+      </div>
+      <div class="row">
+        <div class="cell label">Copies</div>
+        <div class="cell value"><?= fmt(_grand.grand_total_copies) ?></div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="sig">for Signature of the Publisher.</div>
+      <div class="sig">Sorting Assistant<br/>with Date Stamp.</div>
+      <div class="sig">H.S.A.</div>
+    </div>
+  </div>
+</body>
+</html>
