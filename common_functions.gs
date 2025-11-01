@@ -46,7 +46,9 @@ function onOpen() {
     .addItem('Generate Door Delivery Label', 'create_door_delivery_labels')
     .addItem('Generate All', 'generate_all_shipping_labels')
     .addItem('Magazine Details Form', 'show_form')
-    .addItem('Generate Postal Invoice', 'create_postal_invoice')
+    .addItem('Generate Only Postal Invoice', 'create_postal_invoice')
+    .addItem('Generate Only More Copies Invoice', 'create_more_copies_invoice')
+    .addItem('Generate Both Postal and More Copies Invoice', 'create_both_invoices')
     .addToUi();
 }
 
