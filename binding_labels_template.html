@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Binding Label</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 20px;
+    }
+
+    .page {
+      position: relative;
+      width: 21cm;
+      height: 29.7cm;
+      page-break-after: always;
+    }
+
+    /* Absolute positioned fields (cm units as required) */
+    .area-code {
+      position: absolute;
+      left: 12cm;
+      top: 5.5cm;
+      font-weight: 700;
+    }
+
+    .area-name-1 {
+      position: absolute;
+      left: 8cm;
+      top: 8.5cm;
+      font-weight: 700;
+    }
+
+    .pin-code-1 {
+      position: absolute;
+      left: 8cm;
+      top: 9.5cm;
+      font-weight: 700;
+    }
+
+    .area-name-2 {
+      position: absolute;
+      left: 8cm;
+      top: 18cm;
+      font-weight: 700;
+    }
+
+    .pin-code-2 {
+      position: absolute;
+      left: 8cm;
+      top: 19cm;
+      font-weight: 700;
+    }
+
+    .sno {
+      position: absolute;
+      left: 12.5cm;
+      top: 23cm;
+    }
+
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+<? 
+  var snoCounter = 1;
+  (labels_data || []).forEach(function(label){
+    var get = function(k){ 
+      return (label instanceof Map) ? label.get(k) : label[k];
+    };
+
+    var area_code = get('area_code') || "";
+    var area_name = get('area_name') || "";
+    var pin_code  = get('pin_code')  || "";
+    var count     = parseInt(get('label_count'), 10) || 0;
+
+    for (var i = 0; i < count; i++) {
+?>
+      <div class="page">
+        <div class="area-code"><?= "AC " + area_code ?></div>
+
+        <!-- First occurrence -->
+        <div class="area-name-1"><?= area_name?></div>
+        <div class="pin-code-1"><?= pin_code ?></div>
+
+        <!-- Second occurrence -->
+        <div class="area-name-2"><?= area_name?></div>
+        <div class="pin-code-2"><?= pin_code ?></div>
+
+        <!-- Serial Number -->
+        <div class="sno"><?= snoCounter ?></div>
+      </div>
+<? 
+      snoCounter++;
+    }
+  });
+?>
+
+</body>
+</html>
