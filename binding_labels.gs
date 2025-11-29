@@ -6,7 +6,7 @@ function generate_binding_label() {
   let required_columns = []
   let get_column_index = new Map() // indexes of column before preprocessing (we need it to extract only relevant column)
   let final_columns_index = new Map() // column index for the target_sheet after preprocessing (used later in the code).
-  let data_range =  getSheet("Sheet1").getDataRange()//SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getDataRange()
+  let data_range =  SpreadsheetApp.getActiveSpreadsheet().getActiveSheet().getDataRange()//getSheet("Sheet1").getDataRange()
   data = data_range.getValues();
   
   data[0].forEach((column_name, i) => {
