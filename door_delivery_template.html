@@ -95,8 +95,8 @@
      var nb2 = Number(L.nbox2 || 0);
      var cb2 = Number(L.ncopies_box2 || 0);
      var free = Number(L.free_copies || 0);
-     var invoiced = (nb1 * cb1 || 0) + (nb2 * cb2 || 0);
-     var total = invoiced + free;
+     var total = (nb1 * cb1 || 0) + (nb2 * cb2 || 0) ;
+     var invoiced = total - free;
     // bundles line (conditionally add the 2nd set)
      var bundlesLine = nb1 + "  BUNDLE(S)  @  " + cb1 + "  COPIES";
      if (nb2 && cb2) {
