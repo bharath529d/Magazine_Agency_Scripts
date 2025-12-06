@@ -4,7 +4,8 @@ function generate_postal_shipping_label(data) {
   fileName = fileName.replace(/-/g, '');
   fileName = fileName + "PostalShippingLabel";
   let target_sheet = getSheet("Postal Address Label")
-  let required_columns = ["subscription_number", "customer_name", "salutation", "mobile", "phone", "Contact.CF.Area Code", "shipping_address", "shipping_address2", "shipping_city", "shipping_zip", "FreeCopies", "No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type", "Despatched through", "Destination Place"]
+  let required_columns = ["subscription_number", "customer_name", "salutation", "mobile", "phone", "Contact.CF.Area Code", "shipping_address", "shipping_address2", "shipping_city",
+  "shipping_state","shipping_zip", "FreeCopies", "No Boxes 1", "Copies Boxes 1", "No Boxes 2", "Copies Boxes 2", "Posting Type", "Despatched through", "Destination Place"]
   let get_column_index = new Map() // indexes of column before preprocessing (we need it to extract only relevant column)
   let final_columns_index = new Map() // column index for the target_sheet after preprocessing (used later in the code).
   if (data) {
@@ -55,6 +56,7 @@ function generate_postal_shipping_label(data) {
       address_data.shipping_address2 = shipping_address2
     }
     address_data.shipping_city = row[final_columns_index.get("shipping_city")].trim()
+    address_data.shipping_state = row[final_columns_index.get("shipping_state")].trim()
     address_data.shipping_zip = row[final_columns_index.get("shipping_zip")]
     label_data.nbox1 = row[final_columns_index.get("No Boxes 1")]
     label_data.ncopies_box1 = row[final_columns_index.get("Copies Boxes 1")]
