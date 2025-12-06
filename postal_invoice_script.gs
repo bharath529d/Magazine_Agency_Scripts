@@ -173,3 +173,9 @@ function create_postal_invoice(){
 function create_both_invoices(){
  create_invoice('B')
 }
+
+
+
+
+
+
