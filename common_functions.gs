@@ -44,11 +44,13 @@ function onOpen() {
     .addItem('Generate Postal Shipping Label', 'generate_postal_shipping_label')
     .addItem('Generate Roadways Shipping Label', 'generate_roadways_shipping_label')
     .addItem('Generate Door Delivery Label', 'create_door_delivery_labels')
+    .addItem('Generate More Copies Label', 'generate_more_copies_shipping_label')
     .addItem('Generate All', 'generate_all_shipping_labels')
     .addItem('Magazine Details Form', 'show_form')
     .addItem('Generate Only Postal Invoice', 'create_postal_invoice')
     .addItem('Generate Only More Copies Invoice', 'create_more_copies_invoice')
     .addItem('Generate Both Postal and More Copies Invoice', 'create_both_invoices')
+    .addItem('Generate Binding Labels', 'generate_binding_label')
     .addToUi();
 }
 
